@@ -14,18 +14,24 @@ page = requests.get(URL)
 
 soup = bs(page.content, 'html.parser')
 test = soup.find("div", {"id": "paginator_example_top"})
-print(test)
 
 
 pages = []
-#getting links to all the pages
 for z in soup.find("div", {"id": "paginator_example_top"}):
-    pg = z.find('a', href=True)
-    href_pg = (pg['href'])
-    str_pg = str(href_pg)
-    pages.append(str_pg)
-    if pg is None:
-        continue
+    for table in z.find_all('table'):
+        for tbody in table.find_all('tbody'):
+            for tr in tbody.find_all('tr'):
+                for td in tr.find_all('td'):
+                    for span in td.find_all('span'):
+                        for a in span.find_all('a'):
+                            pg = z.find('a', href=True)
+                            href_pg = (pg['href'])
+                            str_pg = str(href_pg)
+                            pages.append(str_pg)
+                            if pg is None:
+                                continue
+                            
+print(pages)
 
 #getting the links to every book on a page
 links = []
