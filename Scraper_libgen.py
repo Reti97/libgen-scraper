@@ -9,45 +9,51 @@ import PyPDF2
 suchbegriff = str(input("Suchbegriff:"))
 url_sb = suchbegriff.replace(" ", "+")
 
-URL = 'https://libgen.is/search.php?req=' + url_sb + '&open=0&res=25&view=detailed&phrase=1&column=def'
-page = requests.get(URL)
+page_index = 1
+all_book_links = []
+while True:
+    URL = 'https://libgen.is/search.php?req=' + url_sb + f'&open=0&res=100&view=detailed&phrase=1&column=def&page={page_index}'
+    page = requests.get(URL)
+    soup = bs(page.content, 'html.parser')
 
-soup = bs(page.content, 'html.parser')
+    #getting the links to every book on a page
+    links = []
+    for i in soup.find_all('td', {'colspan' : '2'}):
+        link = i.find('a', href=True)
+        href_link = (link['href'])
+        str_link = str(href_link)
+        links.append(str_link.replace('..', ''))
+        if link is None:
+            continue
 
-pages = []
+    #slug to books
+    new_book_links = []
+    regex = re.compile('.*book\/index\.php\?.*')
+    links_books = [n for n in links if regex.match(n)]
 
-for z in soup.find_all("div", {"id": "paginator_example_top"}):
-    for table in z.find_all('table', {"width": "100%"}):
-        for tbody in table.find_all('tbody'):
-            for tr in tbody.find_all('tr'):
-                for td in tr.find_all('td', {"width": "4%"}):
-                    for span in td.find_all('span'):
-                        for a in span.find_all('a'):
-                            pg = a.find('a', href=True)
-                            href_pg = (pg['href'])
-                            str_pg = str(href_pg)
-                            pages.append(str_pg)
-                            if pg is None:
-                                continue
-                            
-print(pages)
+    #building the correct links directly to the book 
+    for e in links_books:
+        link_to_book = 'https://libgen.is' + str(e)
+        new_book_links.append(link_to_book)
+    if len(new_book_links) > 0:
+        all_book_links.extend(new_book_links)
+        page_index += 1
+    else:
+        break
 
-#getting the links to every book on a page
-links = []
-for i in soup.find_all('td', {'colspan' : '2'}):
-    link = i.find('a', href=True)
-    href_link = (link['href'])
-    str_link = str(href_link)
-    links.append(str_link.replace('..', ''))
-    if link is None:
-        continue
+download_links = []
+#open book links
+for link in all_book_links:
+    prepared_link = link.replace("https://libgen.is/book/index.php?md5=", "")
+    URL = "http://library.lol/main/" + prepared_link
+    page = requests.get(URL)
+    soup = bs(page.content, 'html.parser')
+    for a in soup.find_all('div', {'id' : 'download'}):
+        for i in a.find_all('h2'):
+            for h in i.find_all('a', href=True):
+                download_link = (link['href'])
+                print(link['href'])
+                download_str_link = str(download_link)
+                download_links.append(download_str_link)
 
-#slug to books
-regex = re.compile('.*book\/index\.php\?.*')
-links_books = [n for n in links if regex.match(n)]
-
-#building the correct links directly to the book 
-book_links = []
-for e in links_books:
-    link_to_book = 'https://libgen.is' + str(e)
-    book_links.append(link_to_book)
+print(download_links)
