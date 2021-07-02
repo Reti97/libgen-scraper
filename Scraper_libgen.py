@@ -13,18 +13,17 @@ URL = 'https://libgen.is/search.php?req=' + url_sb + '&open=0&res=25&view=detail
 page = requests.get(URL)
 
 soup = bs(page.content, 'html.parser')
-test = soup.find("div", {"id": "paginator_example_top"})
-
 
 pages = []
-for z in soup.find("div", {"id": "paginator_example_top"}):
-    for table in z.find_all('table'):
+
+for z in soup.find_all("div", {"id": "paginator_example_top"}):
+    for table in z.find_all('table', {"width": "100%"}):
         for tbody in table.find_all('tbody'):
             for tr in tbody.find_all('tr'):
-                for td in tr.find_all('td'):
+                for td in tr.find_all('td', {"width": "4%"}):
                     for span in td.find_all('span'):
                         for a in span.find_all('a'):
-                            pg = z.find('a', href=True)
+                            pg = a.find('a', href=True)
                             href_pg = (pg['href'])
                             str_pg = str(href_pg)
                             pages.append(str_pg)
@@ -52,4 +51,3 @@ book_links = []
 for e in links_books:
     link_to_book = 'https://libgen.is' + str(e)
     book_links.append(link_to_book)
-
