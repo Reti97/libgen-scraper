@@ -5,14 +5,15 @@ from re import match
 import urllib
 import urllib.request
 import PyPDF2
+import os
 
 suchbegriff = str(input("Suchbegriff:"))
 url_sb = suchbegriff.replace(" ", "+")
-
+debug = True
 page_index = 1
 all_book_links = []
 while True:
-    URL = 'https://libgen.is/search.php?req=' + url_sb + f'&open=0&res=100&view=detailed&phrase=1&column=def&page={page_index}'
+    URL = 'https://libgen.is/search.php?req=' + url_sb + f'&open=0&res=15&view=detailed&phrase=1&column=def&page={page_index}'
     page = requests.get(URL)
     soup = bs(page.content, 'html.parser')
 
@@ -38,6 +39,8 @@ while True:
     if len(new_book_links) > 0:
         all_book_links.extend(new_book_links)
         page_index += 1
+        if debug:
+            break
     else:
         break
 
@@ -51,9 +54,14 @@ for link in all_book_links:
     for a in soup.find_all('div', {'id' : 'download'}):
         for i in a.find_all('h2'):
             for h in i.find_all('a', href=True):
-                download_link = (link['href'])
-                print(link['href'])
+                download_link = (h.get('href'))
                 download_str_link = str(download_link)
-                download_links.append(download_str_link)
+                if download_str_link.split(".")[-1] == "pdf": #Without this it also finds sum weird djvu files
+                    download_links.append(download_str_link)
 
-print(download_links)
+#Let's try to download first link for starters
+for url in download_links:
+    data = requests.get(url, stream=True)
+    outputFile = open("/".join([os.getcwd(),url.split("/")[-1]]), "wb")#Somehow this fucker complains at some point, prolly cause of the name
+    outputFile.write(data.content)
+    outputFile.close()
