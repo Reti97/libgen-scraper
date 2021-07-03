@@ -6,14 +6,16 @@ import urllib
 import urllib.request
 import PyPDF2
 import os
+import pdfminer.high_level as pdfminer
+from threading import Thread
 
 suchbegriff = str(input("Suchbegriff:"))
 url_sb = suchbegriff.replace(" ", "+")
-debug = True
+debug = False
 page_index = 1
 all_book_links = []
 while True:
-    URL = 'https://libgen.is/search.php?req=' + url_sb + f'&open=0&res=15&view=detailed&phrase=1&column=def&page={page_index}'
+    URL = 'https://libgen.is/search.php?req=' + url_sb + f'&open=0&res=100&view=detailed&phrase=1&column=def&page={page_index}'
     page = requests.get(URL)
     soup = bs(page.content, 'html.parser')
 
@@ -60,8 +62,31 @@ for link in all_book_links:
                     download_links.append(download_str_link)
 
 #Let's try to download first link for starters
+book_index = 1
+
+#Do sum stuff asynchronously cause me tiref of waiting
+def convert_book_to_text(pdfpath, txtpath):
+    pdf_text = pdfminer.extract_text(pdfpath)
+    text_file = open(txtpath, "w", encoding='utf8')
+    text_file.writelines(pdf_text)
+    text_file.close()
+    print(f"Assimilated {txtpath.split('/')[-1]}")
+
 for url in download_links:
+    print(f"Downloading file nr. {book_index}")
     data = requests.get(url, stream=True)
-    outputFile = open("/".join([os.getcwd(),url.split("/")[-1]]), "wb")#Somehow this fucker complains at some point, prolly cause of the name
+    datafolder = "/".join([os.getcwd(), suchbegriff.replace(" ", "_")])
+    if not os.path.exists(datafolder):
+        os.makedirs(datafolder)
+    filename = f"book_{book_index}.pdf"
+    textfilename = f"book_{book_index}.txt"
+    full_path = "/".join([datafolder, filename])
+    outputFile = open(full_path, "wb")
     outputFile.write(data.content)
     outputFile.close()
+    print("Download complete, starting to parse in background...")
+    
+    full_text_path = "/".join([datafolder, textfilename])
+    parser_thread = Thread(target=convert_book_to_text, args=(full_path, full_text_path))
+    parser_thread.start()   
+    book_index += 1
