@@ -9,16 +9,23 @@ import pdfminer.high_level as pdfminer
 from threading import Thread
 from itertools import cycle
 import csv
+import Prawler
 
+proxy_type = ["http", "socks4", "socks5"]
+proxy_country = ['AF', 'AL', 'AM', 'AR', 'AT', 'AU', 'BA', 'BD', 'BG', 'BO', 'BR', 'BY', 'CA', 'CL', 'CM', 'CN', 'CO', 'CZ', 'DE', 'EC', 'EG', 'ES', 'FR', 'GB', 'GE', 'GN', 'GR', 'GT', 'HK', 'HN', 'HU', 'ID', 'IN', 'IQ', 'IR', 'IT', 'JP', 'KE', 'KG', 'KH', 'KR', 'KZ', 'LB', 'LT', 'LV', 'LY', 'MD', 'MM', 'MN', 'MU', 'MW', 'MX', 'MY', 'NG', 'NL', 'NO', 'NP', 'PE', 'PH', 'PK', 'PL', 'PS', 'PY', 'RO', 'RS', 'RU', 'SC', 'SE', 'SG', 'SK', 'SY', 'TH', 'TR', 'TW', 'TZ', 'UA', 'UG', 'US', 'VE', 'VN', 'ZA']
+
+for prox in proxy_type:
+    for country in proxy_country:
+        proxy_list = Prawler.get_proxy_list(500, prox, "all", country)
 
 #get Proxies
 with open('proxies.csv') as f:
     list_proxy = list(csv.reader(f))
 
-print(list_proxy)
-
 
 """
+
+
 proxy_cycle = cycle(list_proxy)
 
 # Prime the pump
