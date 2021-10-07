@@ -1,7 +1,7 @@
 # libgen-scraper
 
 ## About The Project
-[Plexatic](https://github.com/PLEXATIC) and myself both Study AI & ML Plexatic once mentioned, that he had the idea of training an AI with data from books and so we came up with the idea of building such a scraper.
+[Plexatic](https://github.com/PLEXATIC) and myself both Study AI & ML Plexatic once mentioned, that he had the idea of training an AI with data from books and so we came up with the idea of building such a scraper. It's fucking slow.
 
 ## Getting Started
 You can just clone this project or copy the file, install all the dependencies using pip or anaconda.
