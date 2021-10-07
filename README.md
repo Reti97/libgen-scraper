@@ -4,9 +4,20 @@
 [Plexatic](https://github.com/PLEXATIC) and myself both Study AI & ML Plexatic once mentioned, that he had the idea of training an AI with data from books and so we came up with the idea of building such a scraper.
 
 ## Getting Started
-You can just clone this project or copy the file, install all the dependencies / libraries with "pip install library_name".
+You can just clone this project or copy the file, install all the dependencies using pip or anaconda.
 
-## Prerequisites
+### Using anaconda
+Create a new conda environment using this command:
+```bash 
+conda create -n [environment_name] --file requirements.txt
+```
+(replace `[environment_name]` with the name you want to give to the environment)
+
+From now on, you can activate the environment by using
+```bash
+conda activate [environment_name]
+```
+### Using pip
 The following libraries are being used:
 
 - requests
@@ -23,6 +34,16 @@ The following libraries are being used:
 - time
 - random_user_agent.user_agent
 - random_user_agent.params
+
+Install them one-by one using
+```bash
+pip install library_name
+```
+for every dependency, or all at once using
+
+```bash
+pip install -r requirements.txt
+```
 
 ## Usage
 
