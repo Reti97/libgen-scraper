@@ -27,4 +27,4 @@ The following libraries are being used:
 ## Usage
 
 You can just get this File, install everything and try to run it, after some time you will be able to add some input (your search term) and then the script will start downloading all books matching the search term from libgen.is. 
-As the source code of libgen most probably will be changed from time to time, we can't guarantee, that the script will work, but it did as of today. 
+As the source code of libgen most probably will be changed from time to time, we can't guarantee, that the script will work, but it did as of today (October, 7th, 2021). 
